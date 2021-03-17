@@ -153,12 +153,18 @@ func (c *Canva) ToPNG(fpath string) error {
 }
 
 // ToJpeg saves the image to local with Jpeg format.
-func (c *Canva) ToJPEG(path string) error {
+func (c *Canva) ToJPEG(path string, quality int) error {
 	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
-	if err := jpeg.Encode(f, c.Img(), nil); err != nil {
+
+	options := &jpeg.Options{}
+	if 0 <= quality && quality <= 100 {
+		options.Quality = quality
+	}
+
+	if err := jpeg.Encode(f, c.Img(), options); err != nil {
 		f.Close()
 		return err
 	}
